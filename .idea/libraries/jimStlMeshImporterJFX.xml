@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jimStlMeshImporterJFX">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/JFX3DModelImporters_EA_2014-02-09-2/jimStlMeshImporterJFX.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
