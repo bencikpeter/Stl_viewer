@@ -3,16 +3,13 @@ package sample;
 
 import com.interactivemesh.jfx.importer.stl.StlMeshImporter;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
+import javafx.event.EventHandler;;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
@@ -22,22 +19,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Mesh;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
-
 import java.io.File;
-import java.io.StringReader;
-import java.util.List;
 
 public class Main extends Application {
 
-    private TextField path;
     private static String filePath;
 
     private static final Color lightColor = Color.rgb(244, 255, 250);
@@ -79,11 +70,12 @@ public class Main extends Application {
 
         meshView.setMaterial(material);
 
-        //
+
+        //setting initial position of the model
         meshView.getTransforms().setAll(new Rotate(90, Rotate.Z_AXIS), new Rotate(90, Rotate.X_AXIS));
 
 
-
+        //rotation handler
         meshView.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -119,19 +111,6 @@ public class Main extends Application {
         root.getChildren().add(pointLight3);
         root.getChildren().add(ambient);
 
-
-        /*root.setOnScroll(new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
-
-                if (meshView.getScaleX()+ 0.1*event.getDeltaY() >= 0.0 || event.getDeltaY() > 0.0){
-                    meshView.setScaleX(meshView.getScaleX() + 0.1*event.getDeltaY());
-                    meshView.setScaleY(meshView.getScaleY() + 0.1*event.getDeltaY());
-                    meshView.setScaleZ(meshView.getScaleZ() + 0.1*event.getDeltaY());
-                }
-            }
-        });*/
-
         return root;
     }
 
@@ -147,14 +126,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        List<String> args = getParameters().getRaw();
-
-        //if (args.size() != 1) throw new IllegalArgumentException("wrong number of arguments");
-
-        //filePath = args.get(0);
-
         primaryStage.setTitle("STL Viewer");
-
 
         Button btn = new Button();
         btn.setText("Open STL file");
@@ -168,10 +140,9 @@ public class Main extends Application {
 
         Label label1 = new Label("Path:");
         TextField textField = new TextField ();
-        //HBox hb = new HBox();
+
         root.add(label1,0,1);
         root.add(textField,1,1);
-        //hb.setSpacing(10);
 
         primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
@@ -184,15 +155,14 @@ public class Main extends Application {
                 filePath=textField.getText();
 
                 if (textField.getText()==null || textField.getText().isEmpty()) {
-                    
+
                     throw new IllegalArgumentException("bad path");
                 }
 
                 Group group  = buildModel();
 
-                //some transformations of group - probably to fit the viewing frame fine
 
-                Scene scene = new Scene(group); //not specifing the size for now
+                Scene scene = new Scene(group); //not specifying the size for now
                 scene.setFill(Color.rgb(10, 10, 40));
                 addCamera(scene);
                 scene.setOnScroll(new EventHandler<ScrollEvent>() {
@@ -207,7 +177,7 @@ public class Main extends Application {
                     }
                 });
 
-                //primaryStage.setTitle("STL viewer - " + filePath);
+                primaryStage.setTitle("STL viewer - " + filePath);
                 primaryStage.setScene(scene);
                 primaryStage.show();
             }
