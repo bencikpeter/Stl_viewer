@@ -5,19 +5,25 @@ import com.interactivemesh.jfx.importer.stl.StlMeshImporter;
 
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Mesh;
@@ -143,32 +149,71 @@ public class Main extends Application {
 
         List<String> args = getParameters().getRaw();
 
-        if (args.size() != 1) throw new IllegalArgumentException("wrong number of arguments");
+        //if (args.size() != 1) throw new IllegalArgumentException("wrong number of arguments");
 
-        filePath = args.get(0);
+        //filePath = args.get(0);
 
-        Group group  = buildModel();
+        primaryStage.setTitle("STL Viewer");
 
-        //some transformations of group - probably to fit the viewing frame fine
 
-        Scene scene = new Scene(group); //not specifing the size for now
-        scene.setFill(Color.rgb(10, 10, 40));
-        addCamera(scene);
-        scene.setOnScroll(new EventHandler<ScrollEvent>() {
+        Button btn = new Button();
+        btn.setText("Open STL file");
+
+        GridPane root = new GridPane();
+        root.setAlignment(Pos.CENTER);
+        root.setHgap(10);
+        root.setVgap(10);
+        root.setPadding(new Insets(25, 25, 25, 25));
+        root.add(btn,1,2);
+
+        Label label1 = new Label("Path:");
+        TextField textField = new TextField ();
+        //HBox hb = new HBox();
+        root.add(label1,0,1);
+        root.add(textField,1,1);
+        //hb.setSpacing(10);
+
+        primaryStage.setScene(new Scene(root, 300, 250));
+        primaryStage.show();
+
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
             @Override
-            public void handle(ScrollEvent event) {
+            public void handle(ActionEvent event) {
 
-                if (meshView.getScaleX()+ 0.1*event.getDeltaY() >= 0.0 || event.getDeltaY() > 0.0){
-                    meshView.setScaleX(meshView.getScaleX() + 0.1*event.getDeltaY());
-                    meshView.setScaleY(meshView.getScaleY() + 0.1*event.getDeltaY());
-                    meshView.setScaleZ(meshView.getScaleZ() + 0.1*event.getDeltaY());
+                filePath=textField.getText();
+
+                if (textField.getText()==null || textField.getText().isEmpty()) {
+                    
+                    throw new IllegalArgumentException("bad path");
                 }
+
+                Group group  = buildModel();
+
+                //some transformations of group - probably to fit the viewing frame fine
+
+                Scene scene = new Scene(group); //not specifing the size for now
+                scene.setFill(Color.rgb(10, 10, 40));
+                addCamera(scene);
+                scene.setOnScroll(new EventHandler<ScrollEvent>() {
+                    @Override
+                    public void handle(ScrollEvent event) {
+
+                        if (meshView.getScaleX()+ 0.1*event.getDeltaY() >= 0.0 || event.getDeltaY() > 0.0){
+                            meshView.setScaleX(meshView.getScaleX() + 0.1*event.getDeltaY());
+                            meshView.setScaleY(meshView.getScaleY() + 0.1*event.getDeltaY());
+                            meshView.setScaleZ(meshView.getScaleZ() + 0.1*event.getDeltaY());
+                        }
+                    }
+                });
+
+                //primaryStage.setTitle("STL viewer - " + filePath);
+                primaryStage.setScene(scene);
+                primaryStage.show();
             }
         });
 
-        primaryStage.setTitle("STL viewer - " + filePath);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+
     }
 
 
